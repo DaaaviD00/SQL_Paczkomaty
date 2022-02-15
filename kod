@@ -1,0 +1,399 @@
+USE master
+GO
+
+CREATE DATABASE [paczkomaty]
+GO
+USE Paczkomaty
+GO
+
+
+
+CREATE TABLE Paczka (
+ID_PACZKA INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+ID_KURIER INT NOT NULL,
+ID_NADAWCA INT NOT NULL,
+ID_ODBIORCA INT NOT NULL,
+ID_PACZKOMAT_NAD INT NOT NULL,
+ID_PACZKOMAT_ODB INT NOT NULL,
+ID_REKLAMACJI INT null,
+ID_SORTOWNIA INT NOT NULL,
+DATA_NADANIA DATE NOT NULL,
+ID_KATEGORIA INT NOT NULL,
+ID_STATUS_PACZ INT NOT NULL,
+ID_STATUS_REK INT null
+);
+---------------------------------------------------------------------------------
+
+CREATE TABLE Pojazd (
+ID_AUTO INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+MARKA VARCHAR(50) NOT NULL,
+MODEL VARCHAR(50) NOT NULL,
+NUMER_REJ VARCHAR(7) NOT NULL,
+DATA_REJ DATE NOT NULL
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Kategoria (
+ID_KATEGORIA INT PRIMARY KEY NOT NULL IDENTITY(1,1) ,
+ROZMIAR varchar(1) NOT NULL,
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Kurier (
+ID_KURIER INT NOT NULL IDENTITY(1,1) ,
+IMIE VARCHAR(50) NOT NULL,
+NAZWISKO VARCHAR(50) NOT NULL,
+NUEMR_TEL INT NOT NULL,
+ID_AUTO INT NOT NULL,
+PRIMARY KEY (ID_KURIER),
+FOREIGN KEY (ID_AUTO) REFERENCES Pojazd(ID_AUTO)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Nadawca (
+ID_NADAWCA INT NOT NULL IDENTITY(1,1),
+IMIE VARCHAR(50) NOT NULL,
+NAZWISKO VARCHAR(50) NOT NULL,
+NR_TEL INT NOT NULL,
+E_MAIL VARCHAR(100) NOT NULL,
+PRIMARY KEY (ID_NADAWCA)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Odbiorca (
+ID_ODBIORCA INT NOT NULL IDENTITY(1,1),
+IMIE VARCHAR(50) NOT NULL,
+NAZWISKO VARCHAR(50) NOT NULL,
+NR_TEL INT NOT NULL,
+E_MAIL VARCHAR(100) NOT NULL,
+PRIMARY KEY (ID_ODBIORCA)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Paczkomat_Nad (
+ID_PACZKOMAT_NAD INT NOT NULL IDENTITY(1,1),
+SYMBOL VARCHAR(7) NOT NULL,
+MIASTO VARCHAR(50) NOT NULL,
+ULICA VARCHAR(100) NOT NULL,
+NUMER_UL VARCHAR(10) NOT NULL
+PRIMARY KEY(ID_PACZKOMAT_NAD)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Paczkomat_odb (
+ID_PACZKOMAT_ODB INT NOT NULL IDENTITY(1,1),
+SYMBOL VARCHAR(7) NOT NULL,
+MIASTO VARCHAR(50) NOT NULL,
+ULICA VARCHAR(100) NOT NULL,
+NUMER_UL VARCHAR(4) NOT NULL
+PRIMARY KEY(ID_PACZKOMAT_ODB)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Status_Rek (
+ID_STATUS_REK INT NOT NULL IDENTITY(1,1),
+OPIS VARCHAR(50) ,
+PRIMARY KEY(ID_STATUS_REK)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Reklamacje (
+ID_REKLAMACJI INT NOT NULL IDENTITY(1,1),
+NR_REKLAMACJI INT null,
+ID_STATUS_REK INT null,
+ID_PACZKA INT not null,
+PRIMARY KEY(ID_REKLAMACJI),
+FOREIGN KEY(ID_STATUS_REK) REFERENCES Status_Rek(ID_STATUS_REK)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Sortownia (
+ID_SORTOWNIA INT NOT NULL IDENTITY(1,1),
+MIASTO VARCHAR(50) NOT NULL,
+ULICA VARCHAR(100) NOT NULL,
+NR_UL VARCHAR(4) NOT NULL,
+KOD_POCZTOWY VARCHAR(6) NOT NULL,
+NR_SORTOWNI VARCHAR(4) NOT NULL,
+PRIMARY KEY(ID_SORTOWNIA)
+);
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE Status_Pacz (
+ID_STATUS_PACZ INT NOT NULL IDENTITY(1,1),
+OPIS VARCHAR(50) NOT NULL,
+PRIMARY KEY(ID_STATUS_PACZ)
+);
+
+---------------------------------------------------------------------------------
+ALTER TABLE Paczka
+ADD FOREIGN KEY(ID_KURIER) REFERENCES Kurier(ID_KURIER),
+FOREIGN KEY(ID_NADAWCA) REFERENCES Nadawca(ID_NADAWCA),
+FOREIGN KEY(ID_ODBIORCA) REFERENCES Odbiorca(ID_ODBIORCA),			
+FOREIGN KEY(ID_PACZKOMAT_NAD) REFERENCES Paczkomat_Nad(ID_PACZKOMAT_NAD),			
+FOREIGN KEY(ID_PACZKOMAT_ODB) REFERENCES Paczkomat_odb(ID_PACZKOMAT_ODB),			
+FOREIGN KEY(ID_REKLAMACJI) REFERENCES Reklamacje(ID_REKLAMACJI),
+FOREIGN KEY(ID_SORTOWNIA) REFERENCES Sortownia(ID_SORTOWNIA),				
+FOREIGN KEY(ID_KATEGORIA) REFERENCES Kategoria(ID_KATEGORIA),				
+FOREIGN KEY(ID_STATUS_PACZ) REFERENCES Status_Pacz(ID_STATUS_PACZ),				
+FOREIGN KEY(ID_STATUS_REK) REFERENCES Status_Rek(ID_STATUS_REK);
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Kategoria 
+VALUES ('S');
+INSERT INTO Kategoria
+VALUES ('M');
+INSERT INTO Kategoria 
+VALUES ('L');
+
+ALTER TABLE Kategoria
+alter column ROZMIAR char(2);
+
+INSERT INTO Kategoria 
+VALUES ('XL');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Pojazd
+VALUES ('Mercedes','Vito','WX52Y4C','2020-07-01');
+INSERT INTO Pojazd
+VALUES ('Renault','Master','WE0009H','2021-09-22');
+INSERT INTO Pojazd
+VALUES ('Peugeot','Boxer','PO3VK28','2019-12-11');
+INSERT INTO Pojazd
+VALUES ('Volkswagen','Caddy','DW6192X','2017-01-30');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Kurier 
+VALUES ('Ryszard','Topicki','516077399','3');
+INSERT INTO Kurier 
+VALUES ('Marek','Gocki','667892712','1');
+INSERT INTO Kurier 
+VALUES ('Marysia','Lis','776271882','2');
+INSERT INTO Kurier 
+VALUES ('Renata','Lipnicka','556728121','4');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Nadawca
+VALUES ('Marcin','Wybicki','667888222','M@wp.pl');
+INSERT INTO Nadawca
+VALUES ('Mateusz','Rokicki','767221883','M@gmail.pl');
+INSERT INTO Nadawca
+VALUES ('Sandra','Sona','878221929','S@onet.pl');
+INSERT INTO Nadawca
+VALUES ('Łukasz','Pon','556271882','Ł@onet.pl');
+INSERT INTO Nadawca
+VALUES ('Ryszard','Wierzba','817223912','R@wp.pl');
+INSERT INTO Nadawca
+VALUES ('Wojtek','Lajt','547782192','W@gmail.pl');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Odbiorca
+VALUES ('Peweł','Lisek','555777111','P@wp.pl');
+INSERT INTO Odbiorca
+VALUES ('Łukasz','Lipeczko','728112392','Ł@gmail.com');
+INSERT INTO Odbiorca
+VALUES ('Dawid','Dareczko','873312590','D@onet.com');
+INSERT INTO Odbiorca
+VALUES ('Kuba','Myli','873625122','D@onet.com');
+INSERT INTO Odbiorca
+VALUES ('Kamil','Wojtaszek','777829339','D@onet.com');
+INSERT INTO Odbiorca
+VALUES ('Bożena','Pawelek','778291929','D@onet.com');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Paczkomat_Nad
+VALUES ('WAR0001','Warszawa','Wojska Polskiego','57A');
+
+INSERT INTO Paczkomat_Nad
+VALUES ('SOS0001','Sosnowiec','Główna','117');
+
+INSERT INTO Paczkomat_Nad
+VALUES ('GDA7782','Gdańsk','Kozacka','64E');
+
+INSERT INTO Paczkomat_Nad
+VALUES ('WRO0912','Wrocław','Studzienna','100');
+---------------------------------------------------------------------------------
+INSERT INTO Paczkomat_odb
+VALUES ('WRO0913','Wrocław','Wopistów','1');
+
+INSERT INTO Paczkomat_odb
+VALUES ('GDA7783','Gdańsk','Kicia','2');
+
+INSERT INTO Paczkomat_odb
+VALUES ('SOS0002','Sosnowiec','Główna','90');
+
+INSERT INTO Paczkomat_odb
+VALUES ('WAR0002','Warszawa','Armii Krajowej','14');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Pojazd
+VALUES ('Mercedes','Vito','WX52Y4C','2020-07-01');
+INSERT INTO Pojazd
+VALUES ('Renault','Master','WE0009H','2021-09-22');
+INSERT INTO Pojazd
+VALUES ('Peugeot','Boxer','PO3VK28','2019-12-11');
+INSERT INTO Pojazd
+VALUES ('Volkswagen','Caddy','DW6192X','2017-01-30');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Status_Pacz
+VALUES ('Gotowa do wysyłki');
+INSERT INTO Status_Pacz
+VALUES ('Odebrana z sortowni');
+INSERT INTO Status_Pacz
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Pacz
+VALUES ('Wysłana do sortowni');
+INSERT INTO Status_Pacz
+VALUES ('Wydana do doręczenia');
+INSERT INTO Status_Pacz
+VALUES ('Gotowa do odbioru');
+INSERT INTO Status_Pacz
+VALUES ('Odebrana');
+INSERT INTO Status_Pacz
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Pacz
+VALUES ('Wydana do doręczenia');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Status_Rek
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Rek
+VALUES ('Przyjęta');
+INSERT INTO Status_Rek
+VALUES ('Odrzucona');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Sortownia
+VALUES ('Warszawa','Jałowcowa','20','41-219','21');
+
+INSERT INTO Sortownia
+VALUES ('Łódź','Piękna','38','42-500','6');
+
+INSERT INTO Sortownia
+VALUES ('Częstochowa','Ligocka','5','36-150','251A');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Status_Pacz
+VALUES ('Gotowa do wysyłki');
+INSERT INTO Status_Pacz
+VALUES ('Odebrana z sortowni');
+INSERT INTO Status_Pacz
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Pacz
+VALUES ('Wysłana do sortowni');
+INSERT INTO Status_Pacz
+VALUES ('Wydana do doręczenia');
+INSERT INTO Status_Pacz
+VALUES ('Gotowa do odbioru');
+INSERT INTO Status_Pacz
+VALUES ('Odebrana');
+INSERT INTO Status_Pacz
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Pacz
+VALUES ('Wydana do doręczenia');
+
+---------------------------------------------------------------------------------
+
+INSERT INTO Status_Rek
+VALUES ('W trakcie realizacji');
+INSERT INTO Status_Rek
+VALUES ('Przyjęta');
+INSERT INTO Status_Rek
+VALUES ('Odrzucona');
+
+---------------------------------------------------------------------------------
+
+insert into Reklamacje
+VALUES ('11232','1','1');
+insert into Reklamacje
+VALUES ('99823','2','3');
+insert into Reklamacje
+VALUES ('33421','3','4');
+insert into Reklamacje
+VALUES ('55543','1','5');
+insert into Reklamacje
+VALUES ('77777','5','7');
+insert into Reklamacje
+VALUES ('33029','2','10');
+
+
+
+---------------------------------------------------------------------------------
+INSERT INTO Paczka
+VALUES ('1','1','1','1','1','1','1','2020-01-07','1','1','1');
+
+INSERT INTO Paczka
+VALUES ('1','3','2','4','4',null,'3','2017-12-11','4','9',null);
+
+INSERT INTO Paczka
+VALUES ('1','6','4','3','1','2','2','2000-04-1','3','2','2');
+---------------------------------------------------------------------------------
+INSERT INTO Paczka
+VALUES ('3','3','3','3','3','3','3','2021-09-22','3','3','3');
+
+INSERT INTO Paczka
+VALUES ('3','4','2','4','4','4','3','2015-03-15','4','4','1');
+
+INSERT INTO Paczka
+VALUES ('3','2','2','2','2',null,'2','2011-11-14','2','2',null);
+---------------------------------------------------------------------------------
+INSERT INTO Paczka
+VALUES ('2','6','5','2','2','5','2','2008-01-13','1','2','5');
+
+INSERT INTO Paczka
+VALUES ('2','4','5','1','4',null,'1','2008-01-13','3','5',null);
+
+INSERT INTO Paczka
+VALUES ('2','1','3','4','1',null,'1','2008-01-13','4','6',null);
+---------------------------------------------------------------------------------
+INSERT INTO Paczka
+VALUES ('4','3','3','3','3','6','3','2021-09-22','2','2','6');
+
+INSERT INTO Paczka
+VALUES ('4','3','1','1','1',null,'2','2021-09-22','1','1',null);
+
+INSERT INTO Paczka
+VALUES ('4','3','1','2','4',null,'3','2021-09-22','4','4',null);
+---------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
