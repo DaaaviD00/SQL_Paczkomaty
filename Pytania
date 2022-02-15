@@ -1,0 +1,10 @@
+select a.id_paczka,b.id_sortownia,b.miasto from paczka a
+inner join sortownia b on a.ID_SORTOWNIA= b.ID_SORTOWNIA 
+where b.id_sortownia=1;
+
+select * from pojazd where MARKA='volkswagen' and NUMER_REJ LIKE 'DW%';
+
+
+declare @dzisiaj varchar(10)= (SELECT CONVERT (date, GETDATE()) AS [obecna data])
+select datediff(month, @dzisiaj, '2020-01-07')*-1  AS Ileminelo
+
